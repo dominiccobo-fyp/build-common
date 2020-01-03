@@ -1,0 +1,40 @@
+def requiredRepositoryUrls = [
+    'https://maven.pkg.github.com/dominiccobo-fyp/github-experts-resolver',
+    'https://maven.pkg.github.com/dominiccobo-fyp/context-language-server',
+    'https://maven.pkg.github.com/dominiccobo-fyp/context-api'
+]
+
+
+for(repo in requiredRepositoryUrls) {
+    repositories.add(
+        repositories.maven {
+            url = repo
+            credentials {
+                username "dominiccobo"
+                password System.getenv("MAVEN_ACCESS_TOKEN") ?: "${mavenAccessToken}"
+            }
+        }
+    )    
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven {
+            url = gradle.ext.publishRepo
+            credentials {
+                username "dominiccobo"
+                password System.getenv("MAVEN_ACCESS_TOKEN") ?: "${mavenAccessToken}"
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
